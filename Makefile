@@ -21,10 +21,10 @@ RANLIB=ranlib
 LDFLAGS=
 
 BIGFILES=-D_FILE_OFFSET_BITS=64
-CFLAGS=-Wall -Winline -O2 -g $(BIGFILES)
+CFLAGS=-fPIC -Wall -Winline -O2 -g $(BIGFILES)
 
 # Where you want it installed when you do 'make install'
-PREFIX=/usr/local
+PREFIX=/usr
 
 
 OBJS= blocksort.o  \
@@ -35,7 +35,8 @@ OBJS= blocksort.o  \
       decompress.o \
       bzlib.o
 
-all: libbz2.a bzip2 bzip2recover test
+all: libbz2.a bzip2 bzip2recover shared
+# test
 
 bzip2: libbz2.a bzip2.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
@@ -70,43 +71,44 @@ test: bzip2
 	@cat words3
 
 install: bzip2 bzip2recover
-	if ( test ! -d $(PREFIX)/bin ) ; then mkdir -p $(PREFIX)/bin ; fi
-	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
-	if ( test ! -d $(PREFIX)/man ) ; then mkdir -p $(PREFIX)/man ; fi
-	if ( test ! -d $(PREFIX)/man/man1 ) ; then mkdir -p $(PREFIX)/man/man1 ; fi
-	if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
-	cp -f bzip2 $(PREFIX)/bin/bzip2
-	cp -f bzip2 $(PREFIX)/bin/bunzip2
-	cp -f bzip2 $(PREFIX)/bin/bzcat
-	cp -f bzip2recover $(PREFIX)/bin/bzip2recover
-	chmod a+x $(PREFIX)/bin/bzip2
-	chmod a+x $(PREFIX)/bin/bunzip2
-	chmod a+x $(PREFIX)/bin/bzcat
-	chmod a+x $(PREFIX)/bin/bzip2recover
-	cp -f bzip2.1 $(PREFIX)/man/man1
-	chmod a+r $(PREFIX)/man/man1/bzip2.1
-	cp -f bzlib.h $(PREFIX)/include
-	chmod a+r $(PREFIX)/include/bzlib.h
-	cp -f libbz2.a $(PREFIX)/lib
-	chmod a+r $(PREFIX)/lib/libbz2.a
-	cp -f bzgrep $(PREFIX)/bin/bzgrep
-	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzegrep
-	ln -s -f $(PREFIX)/bin/bzgrep $(PREFIX)/bin/bzfgrep
-	chmod a+x $(PREFIX)/bin/bzgrep
-	cp -f bzmore $(PREFIX)/bin/bzmore
-	ln -s -f $(PREFIX)/bin/bzmore $(PREFIX)/bin/bzless
-	chmod a+x $(PREFIX)/bin/bzmore
-	cp -f bzdiff $(PREFIX)/bin/bzdiff
-	ln -s -f $(PREFIX)/bin/bzdiff $(PREFIX)/bin/bzcmp
-	chmod a+x $(PREFIX)/bin/bzdiff
-	cp -f bzgrep.1 bzmore.1 bzdiff.1 $(PREFIX)/man/man1
-	chmod a+r $(PREFIX)/man/man1/bzgrep.1
-	chmod a+r $(PREFIX)/man/man1/bzmore.1
-	chmod a+r $(PREFIX)/man/man1/bzdiff.1
-	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzegrep.1
-	echo ".so man1/bzgrep.1" > $(PREFIX)/man/man1/bzfgrep.1
-	echo ".so man1/bzmore.1" > $(PREFIX)/man/man1/bzless.1
-	echo ".so man1/bzdiff.1" > $(PREFIX)/man/man1/bzcmp.1
+	if ( test ! -d $(DESTDIR)$(PREFIX)/bin ) ; then mkdir -p $(DESTDIR)$(PREFIX)/bin ; fi
+	if ( test ! -d $(DESTDIR)$(PREFIX)/lib ) ; then mkdir -p $(DESTDIR)$(PREFIX)/lib ; fi
+	if ( test ! -d $(DESTDIR)$(PREFIX)/share/man ) ; then mkdir -p $(DESTDIR)$(PREFIX)/share/man ; fi
+	if ( test ! -d $(DESTDIR)$(PREFIX)/share/man/man1 ) ; then mkdir -p $(DESTDIR)$(PREFIX)/share/man/man1 ; fi
+	if ( test ! -d $(DESTDIR)$(PREFIX)/include ) ; then mkdir -p $(DESTDIR)$(PREFIX)/include ; fi
+	cp -f bzip2 $(DESTDIR)$(PREFIX)/bin/bzip2
+	cp -f bzip2 $(DESTDIR)$(PREFIX)/bin/bunzip2
+	cp -f bzip2 $(DESTDIR)$(PREFIX)/bin/bzcat
+	cp -f bzip2recover $(DESTDIR)$(PREFIX)/bin/bzip2recover
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzip2
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bunzip2
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzcat
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzip2recover
+	cp -f bzip2.1 $(DESTDIR)$(PREFIX)/share/man/man1
+	chmod a+r $(DESTDIR)$(PREFIX)/share/man/man1/bzip2.1
+	cp -f bzlib.h $(DESTDIR)$(PREFIX)/include
+	chmod a+r $(DESTDIR)$(PREFIX)/include/bzlib.h
+	cp -f libbz2.a $(DESTDIR)$(PREFIX)/lib
+	cp -f libbz2.so.1.0.6 $(DESTDIR)$(PREFIX)/lib
+	chmod a+r $(DESTDIR)$(PREFIX)/lib/libbz2.a
+	cp -f bzgrep $(DESTDIR)$(PREFIX)/bin/bzgrep
+	ln -s -f $(DESTDIR)$(PREFIX)/bin/bzgrep $(DESTDIR)$(PREFIX)/bin/bzegrep
+	ln -s -f $(DESTDIR)$(PREFIX)/bin/bzgrep $(DESTDIR)$(PREFIX)/bin/bzfgrep
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzgrep
+	cp -f bzmore $(DESTDIR)$(PREFIX)/bin/bzmore
+	ln -s -f $(DESTDIR)$(PREFIX)/bin/bzmore $(DESTDIR)$(PREFIX)/bin/bzless
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzmore
+	cp -f bzdiff $(DESTDIR)$(PREFIX)/bin/bzdiff
+	ln -s -f $(DESTDIR)$(PREFIX)/bin/bzdiff $(DESTDIR)$(PREFIX)/bin/bzcmp
+	chmod a+x $(DESTDIR)$(PREFIX)/bin/bzdiff
+	cp -f bzgrep.1 bzmore.1 bzdiff.1 $(DESTDIR)$(PREFIX)/share/man/man1
+	chmod a+r $(DESTDIR)$(PREFIX)/share/man/man1/bzgrep.1
+	chmod a+r $(DESTDIR)$(PREFIX)/share/man/man1/bzmore.1
+	chmod a+r $(DESTDIR)$(PREFIX)/share/man/man1/bzdiff.1
+	echo ".so man1/bzgrep.1" > $(DESTDIR)$(PREFIX)/share/man/man1/bzegrep.1
+	echo ".so man1/bzgrep.1" > $(DESTDIR)$(PREFIX)/share/man/man1/bzfgrep.1
+	echo ".so man1/bzmore.1" > $(DESTDIR)$(PREFIX)/share/man/man1/bzless.1
+	echo ".so man1/bzdiff.1" > $(DESTDIR)$(PREFIX)/share/man/man1/bzcmp.1
 
 clean: 
 	rm -f *.o libbz2.a bzip2 bzip2recover \
@@ -215,3 +217,9 @@ manual.pdf: $(MANUAL_SRCS)
 
 manual.html: $(MANUAL_SRCS)
 	./xmlproc.sh -html manual.xml
+
+shared:
+	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.6 $(OBJS)
+	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.6
+	rm -f libbz2.so.1.0
+	ln -s libbz2.so.1.0.6 libbz2.so.1.0
