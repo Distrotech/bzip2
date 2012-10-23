@@ -21,7 +21,7 @@ RANLIB=ranlib
 LDFLAGS=
 
 BIGFILES=-D_FILE_OFFSET_BITS=64
-CFLAGS=-fPIC -Wall -Winline -O2 -g $(BIGFILES)
+CFLAGS += -fPIC -Wall -Winline -O2 -g $(BIGFILES)
 
 # Where you want it installed when you do 'make install'
 PREFIX=/usr
@@ -39,10 +39,10 @@ all: libbz2.a bzip2 bzip2recover shared
 # test
 
 bzip2: libbz2.a bzip2.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
+	$(CC) -fPIC $(CFLAGS) $(LDFLAGS) -o bzip2 bzip2.o -L. -lbz2
 
 bzip2recover: bzip2recover.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2recover bzip2recover.o
+	$(CC) -fPIC $(CFLAGS) $(LDFLAGS) -o bzip2recover bzip2recover.o
 
 libbz2.a: $(OBJS)
 	rm -f libbz2.a
@@ -117,23 +117,23 @@ clean:
 
 blocksort.o: blocksort.c
 	@cat words0
-	$(CC) $(CFLAGS) -c blocksort.c
+	$(CC) -fPIC $(CFLAGS) -c blocksort.c
 huffman.o: huffman.c
-	$(CC) $(CFLAGS) -c huffman.c
+	$(CC) -fPIC $(CFLAGS) -c huffman.c
 crctable.o: crctable.c
-	$(CC) $(CFLAGS) -c crctable.c
+	$(CC) -fPIC $(CFLAGS) -c crctable.c
 randtable.o: randtable.c
-	$(CC) $(CFLAGS) -c randtable.c
+	$(CC) -fPIC $(CFLAGS) -c randtable.c
 compress.o: compress.c
-	$(CC) $(CFLAGS) -c compress.c
+	$(CC) -fPIC $(CFLAGS) -c compress.c
 decompress.o: decompress.c
-	$(CC) $(CFLAGS) -c decompress.c
+	$(CC) -fPIC $(CFLAGS) -c decompress.c
 bzlib.o: bzlib.c
-	$(CC) $(CFLAGS) -c bzlib.c
+	$(CC) -fPIC $(CFLAGS) -c bzlib.c
 bzip2.o: bzip2.c
-	$(CC) $(CFLAGS) -c bzip2.c
+	$(CC) -fPIC $(CFLAGS) -c bzip2.c
 bzip2recover.o: bzip2recover.c
-	$(CC) $(CFLAGS) -c bzip2recover.c
+	$(CC) -fPIC $(CFLAGS) -c bzip2recover.c
 
 
 distclean: clean
@@ -220,6 +220,6 @@ manual.html: $(MANUAL_SRCS)
 
 shared:
 	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.6 $(OBJS)
-	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.6
+	$(CC) -fPIC $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.6
 	rm -f libbz2.so.1.0
 	ln -s libbz2.so.1.0.6 libbz2.so.1.0
